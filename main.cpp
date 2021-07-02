@@ -3,6 +3,7 @@
 #include "IODev.h"
 #include "structures.h"
 #include "errors.h"
+#include <unistd.h>
 
 using namespace std;
 
@@ -12,6 +13,10 @@ void ERROR(string step, ERROR_TYPE errorcode){
     <<  "Termination type: " << errorcode.name << 
     " (Error #" << errorcode.code << ")" << endl;
 
+}
+
+void SUCCESSFULSTART(){
+    cout << "\033[1;32mcomplete\033[0m\n";
 }
 
 int main(){
@@ -45,6 +50,8 @@ int main(){
     IO_Device OUT8; //0508
     IO_Device OUT9; //0509
 
+    //Initializtion
+    cout  << "Initializing" << endl;
     On_Reset.device_init(false, "On_Reset", "input");
     Manual.device_init(false, "Manual", "input");
     Rough_SW.device_init(false, "Rough_SW", "input"); 
@@ -69,7 +76,7 @@ int main(){
     if(Manual.status(false) || On_Reset.status(false)){
         OUT1.setHigh();
         OUT1.status(true);
-        cout << "\033[1;32mcomplete\033[0m\n";
+        SUCCESSFULSTART();
     }
     else{
         ERROR("Manual mode", ERROR1);
@@ -77,19 +84,21 @@ int main(){
 
     //for  test
     cout << endl;
-    Rough_SW.setHigh();
+    //Rough_SW.setHigh();
 
 
     //starting mechanical pump
-    cout  << endl << "Starting mechanical pump..." << endl;
-    if(OUT1.status(false) && Rough_SW.status(false)){
-        OUT9.setHigh();
-        OUT9.status(true);
-        cout << "\033[1;32mcomplete\033[0m\n";
-    }
-    else{
-        ERROR("Mechanical pump", ERROR1);
-    }
+
+
+cout  << endl << "Starting mechanical pump..." << endl;
+if(OUT1.status(false) && Rough_SW.status(false)){
+    OUT9.setHigh();
+    OUT9.status(true);
+    SUCCESSFULSTART();
+}
+else{
+    ERROR("Mechanical pump", ERROR2);
+}
 
     return 0;
 }
