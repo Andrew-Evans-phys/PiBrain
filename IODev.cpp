@@ -38,3 +38,8 @@ void IO_Device::setHigh(){
     on = true;
     cout << name << " is set high" << endl;
 }
+
+void IO_Device::setLow(){
+    on = false;
+    cout << name << " is set low" << endl;
+}
