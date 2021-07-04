@@ -55,6 +55,11 @@ int main(){
     On_Reset.device_init(false, "On_Reset", "input");
     Manual.device_init(false, "Manual", "input");
     Rough_SW.device_init(false, "Rough_SW", "input"); 
+    Vent.device_init(false,"Vent","input");
+    Rough_S2.device_init(false,"Rough_S2", "input");
+    HI_VAC_Valve.device_init(false,"High vacuum valve", "input");
+    Cryo_Rough.device_init(false,"Cryo rough", "input");
+    Cryo_Purge.device_init(false,"Cryo purge", "input");
     OUT1.device_init(false, "OUT1", "output");
     OUT2.device_init(false, "OUT2", "output");
     OUT3.device_init(false, "OUT3", "output");
@@ -64,6 +69,7 @@ int main(){
     OUT7.device_init(false, "OUT7", "output");
     OUT8.device_init(false, "OUT8", "output");
     OUT9.device_init(false, "OUT9", "output");
+    SUCCESSFULSTART();
 
     //would be done by reading GPIO ports
     On_Reset.setHigh();
@@ -88,17 +94,27 @@ int main(){
 
 
     //starting mechanical pump
+    cout  << endl << "Starting mechanical pump..." << endl;
+    if(OUT1.status(false) && Rough_SW.status(false)){
+        OUT9.setHigh();
+        OUT9.status(true);
+        SUCCESSFULSTART();
+    }
+    else{
+        ERROR("Mechanical pump", ERROR2);
+    }
+
+    //Rough system
+    cout << endl << "Starting rough system" << endl;
+    if(OUT9.status(false) && !HI_VAC_Valve.status(false) && !Vent.status(false) &&
+    Rough_S2.status(false) && !Cryo_Rough.status(false) && !Cryo_Purge.status(false)){
+        OUT3.setHigh();
+    }
+    else{
+        ERROR("Rough system",ERROR3);
+    }
 
 
-cout  << endl << "Starting mechanical pump..." << endl;
-if(OUT1.status(false) && Rough_SW.status(false)){
-    OUT9.setHigh();
-    OUT9.status(true);
-    SUCCESSFULSTART();
-}
-else{
-    ERROR("Mechanical pump", ERROR2);
-}
 
     return 0;
 }
