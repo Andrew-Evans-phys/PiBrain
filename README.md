@@ -26,4 +26,5 @@ Email: evansa@sonoma.edu
 Discord: Andrew Evans#4366
 
 # Development
-Funny enough this section is under development!
+The actual machine logic is currently being implemented. The next phase of development will be to add a
+functional task oriented systems for controlling the order in which the machine is run!
