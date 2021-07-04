@@ -17,9 +17,10 @@ c/c++ files aimed at controlling Cooke vacuum products MK-VII deposition system 
 This GitHub page will also include all the doacumentation for the circuit which the c/c++ will run on.
 
 # Author
-Contact info: 
-Name: Andrew Evans 
-Email: evansa@sonoma.edu 
+Andrew Evans and Leo Janzen
+
+# Contact
+Email: evansa@sonoma.edu \\
 Discord: Andrew Evans#4366
 
 # Development
