@@ -4,7 +4,7 @@
 
 # Table of contents
 - [Usage](#usage)
-- [Author](#Author)
+- [Authors](#Authors)
 - [Contact](#Contact)
 - [Development](#development)
 
@@ -17,7 +17,7 @@
 c/c++ files aimed at controlling Cooke vacuum products MK-VII deposition system using a raspberry pi.
 This GitHub page will also include all the doacumentation for the circuit which the c/c++ will run on.
 
-# Author
+# Authors
 Andrew Evans and Leo Janzen
 
 # Contact
