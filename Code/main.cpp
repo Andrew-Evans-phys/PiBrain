@@ -52,14 +52,23 @@ int main(){
 
     //Initializtion
     cout  << "Initializing" << endl;
-    On_Reset.device_init(false, "On_Reset", "input");
+    //I
+    Start.device_init(false, "Start", "input"); 
+    Stop.device_init(false, "Stop", "input"); 
+    Crossover.device_init(false, "Crossover", "input");  
+    Auto.device_init(false, "Auto", "input"); 
+    On_Reset.device_init(false, "On_Reset", "input"); 
     Manual.device_init(false, "Manual", "input");
-    Rough_SW.device_init(false, "Rough_SW", "input"); 
-    Vent.device_init(false,"Vent","input");
-    Rough_S2.device_init(false,"Rough_S2", "input");
+    Vent.device_init(false,"Vent","input"); 
+    Rough_S2.device_init(false, "Rough_S2", "input");
     HI_VAC_Valve.device_init(false,"High vacuum valve", "input");
     Cryo_Rough.device_init(false,"Cryo rough", "input");
     Cryo_Purge.device_init(false,"Cryo purge", "input");
+    Vacuum_In.device_init(false, "Vacuum_In", "input");  
+    Rough_SW.device_init(false,"Rough_SW", "input");
+    Water_Lock.device_init(false, "Water_Lock", "input"); 
+    Vent_Auto.device_init(false, "Vent_Auto", "input"); 
+    //O
     OUT1.device_init(false, "OUT1", "output");
     OUT2.device_init(false, "OUT2", "output");
     OUT3.device_init(false, "OUT3", "output");
@@ -74,6 +83,7 @@ int main(){
     //would be done by reading GPIO ports
     On_Reset.setHigh();
     Manual.setHigh();
+    Rough_SW.setHigh();
 
     cout << "Start up"<< endl;
 
@@ -87,10 +97,6 @@ int main(){
     else{
         ERROR("Manual mode", ERROR1);
     }
-
-    //for  test
-    cout << endl;
-    //Rough_SW.setHigh();
 
 
     //starting mechanical pump
@@ -114,7 +120,26 @@ int main(){
         ERROR("Rough system",ERROR3);
     }
 
+    //Cryo-rough
+    cout << endl << "Starting cryo-rough" << endl;
+    if(OUT9.status(false) && !HI_VAC_Valve.status(false) && !Rough_S2.status(false) 
+    && !Vent.status(false) && Cryo_Rough.status(false)){
+        OUT5.setHigh();
+    }
+    else{
+        ERROR("Cryo-rough",ERROR4);
+    }
 
+
+    //Open sys to cyropump
+    cout << endl << "Opening system to cryo-pump" << endl;
+    if(Crossover.status(false) && Vacuum_In.status(false) && !Rough_S2.status(false) && !Vent.status(false)
+    && HI_VAC_Valve.status(false)){
+        OUT7.setHigh();
+    }
+    else{
+        ERROR("Opening system to cryo-pump",ERROR5);
+    }
 
     return 0;
 }
