@@ -1,6 +1,6 @@
 
 <!-- Add banner here -->
-![Banner](https://github.com/Andrew-Evans-phys/PiBrain/Assets/PiBrain_Logo.jpg)
+![Banner](https://github.com/Andrew-Evans-phys/PiBrain/blob/main/Assets/PiBrain_Logo.jpg)
 
 # Project Title
 <!-- Add buttons here -->
