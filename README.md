@@ -1,9 +1,5 @@
 # PiBrain
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Andrew-Evans-phys/PiBrain?include_prereleases)
-![GitHub last commit](https://img.shields.io/github/last-commit/navendu-pottekkat/awesome-readme)
-![GitHub issues](https://img.shields.io/github/issues-raw/navendu-pottekkat/awesome-readme)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/navendu-pottekkat/awesome-readme)
-![GitHub](https://img.shields.io/github/license/navendu-pottekkat/awesome-readme)
+![GitHub](https://img.shields.io/github/license/Andrew-Evans-phys/PiBrain)
 ![Banner](https://github.com/Andrew-Evans-phys/PiBrain/blob/main/Assets/PiBrain_Logo.jpg)
 
 # Table of contents
