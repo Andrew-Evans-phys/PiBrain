@@ -1,11 +1,18 @@
+
+<!-- Add banner here -->
+![Banner](https://github.com/Andrew-Evans-phys/PiBrain/Assets/PiBrain_Logo.jpg)
+
+# Project Title
+<!-- Add buttons here -->
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/navendu-pottekkat/awesome-readme?include_prereleases)
+![GitHub last commit](https://img.shields.io/github/last-commit/navendu-pottekkat/awesome-readme)
+![GitHub issues](https://img.shields.io/github/issues-raw/navendu-pottekkat/awesome-readme)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/navendu-pottekkat/awesome-readme)
+![GitHub](https://img.shields.io/github/license/navendu-pottekkat/awesome-readme)
+
 # PiBrain
 
-
 # Table of contents
-
-
-
-
 - [Usage](#usage)
 - [Author](#Author)
 - [Development](#development)
@@ -15,7 +22,7 @@
 # Installation
 [(Back to top)](#table-of-contents)
 
-# usage
+# Usage
 c/c++ files aimed at controlling Cooke vacuum products MK-VII deposition system using a raspberry pi.
 This GitHub page will also include all the doacumentation for the circuit which the c/c++ will run on.
 
