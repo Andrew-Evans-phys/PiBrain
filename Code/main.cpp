@@ -141,5 +141,14 @@ int main(){
         ERROR("Opening system to cryo-pump",ERROR5);
     }
 
+    //Water lock
+    cout << endl << "Starting water lock" << endl;
+    if((Vacuum_In.status(false) || OUT7.status(false)) && !Vent.status(false) && Water_Lock.status(false)){
+        OUT8.setHigh();
+    }
+    else{
+        ERROR("Water lock start up",ERROR6);
+    } 
+
     return 0;
 }
