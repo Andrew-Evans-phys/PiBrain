@@ -3,11 +3,11 @@
 
 # Table of contents
 
-- [PiBrain](#project-title)
-- [Author](#author)
-- [Table of contents](#table-of-contents)
-- [Installation](#installation)
+
+
+
 - [Usage](#usage)
+- [Author](#Author)
 - [Development](#development)
 
 
@@ -19,8 +19,11 @@
 c/c++ files aimed at controlling Cooke vacuum products MK-VII deposition system using a raspberry pi.
 This GitHub page will also include all the doacumentation for the circuit which the c/c++ will run on.
 
-# author
+# Author
 Contact info: 
 Name: Andrew Evans 
 Email: evansa@sonoma.edu 
 Discord: Andrew Evans#4366
+
+# Development
+Funny enough this section is under development!
