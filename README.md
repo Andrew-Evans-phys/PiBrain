@@ -5,6 +5,7 @@
 # Table of contents
 - [Usage](#usage)
 - [Author](#Author)
+- [Contact](#Contact)
 - [Development](#development)
 
 
@@ -20,7 +21,7 @@ This GitHub page will also include all the doacumentation for the circuit which 
 Andrew Evans and Leo Janzen
 
 # Contact
-Email: evansa@sonoma.edu \\
+Email: evansa@sonoma.edu                                                                          
 Discord: Andrew Evans#4366
 
 # Development
