@@ -2,6 +2,7 @@
 #include <string>
 #include "IODev.h"
 
+
 using namespace std;
 
 void IO_Device::device_init(bool default_on, string set_name, string set_type){

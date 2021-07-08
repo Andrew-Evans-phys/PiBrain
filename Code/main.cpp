@@ -89,7 +89,7 @@ int main(){
 
     //system in manual mode
     cout << endl << "Putting system in Manual mode..." << endl;
-    if(Manual.status(false) || On_Reset.status(false)){
+    if(Manual.status(1) || On_Reset.status(1)){
         OUT1.setHigh();
         OUT1.status(true);
         SUCCESSFULSTART();
@@ -101,7 +101,7 @@ int main(){
 
     //starting mechanical pump
     cout  << endl << "Starting mechanical pump..." << endl;
-    if(OUT1.status(false) && Rough_SW.status(false)){
+    if(OUT1.status(1) && Rough_SW.status(1)){
         OUT9.setHigh();
         OUT9.status(true);
         SUCCESSFULSTART();
@@ -112,8 +112,8 @@ int main(){
 
     //Rough system
     cout << endl << "Starting rough system" << endl;
-    if(OUT9.status(false) && !HI_VAC_Valve.status(false) && !Vent.status(false) &&
-    Rough_S2.status(false) && !Cryo_Rough.status(false) && !Cryo_Purge.status(false)){
+    if(OUT9.status(1) && !HI_VAC_Valve.status(1) && !Vent.status(1) &&
+    Rough_S2.status(1) && !Cryo_Rough.status(1) && !Cryo_Purge.status(1)){
         OUT3.setHigh();
     }
     else{
@@ -122,8 +122,8 @@ int main(){
 
     //Cryo-rough
     cout << endl << "Starting cryo-rough" << endl;
-    if(OUT9.status(false) && !HI_VAC_Valve.status(false) && !Rough_S2.status(false) 
-    && !Vent.status(false) && Cryo_Rough.status(false)){
+    if(OUT9.status(1) && !HI_VAC_Valve.status(1) && !Rough_S2.status(1) 
+    && !Vent.status(1) && Cryo_Rough.status(1)){
         OUT5.setHigh();
     }
     else{
@@ -133,8 +133,8 @@ int main(){
 
     //Open sys to cyropump
     cout << endl << "Opening system to cryo-pump" << endl;
-    if(Crossover.status(false) && Vacuum_In.status(false) && !Rough_S2.status(false) && !Vent.status(false)
-    && HI_VAC_Valve.status(false)){
+    if(Crossover.status(1) && Vacuum_In.status(1) && !Rough_S2.status(1) && !Vent.status(1)
+    && HI_VAC_Valve.status(1)){
         OUT7.setHigh();
     }
     else{
@@ -143,7 +143,7 @@ int main(){
 
     //Water lock
     cout << endl << "Starting water lock" << endl;
-    if((Vacuum_In.status(false) || OUT7.status(false)) && !Vent.status(false) && Water_Lock.status(false)){
+    if((Vacuum_In.status(1) || OUT7.status(1)) && !Vent.status(1) && Water_Lock.status(1)){
         OUT8.setHigh();
     }
     else{
