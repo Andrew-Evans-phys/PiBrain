@@ -9,10 +9,10 @@
 ###########################################################
 
 import time
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO uncomment for use
 
 
-GPIO.setmode(GPIO.BCM) #setting the pin layout style  to be BC
+#GPIO.setmode(GPIO.BCM) #setting the pin layout style  to be BC #uncomment for use
 
 class bcolors:
     OK = '\033[92m' #GREEN
@@ -26,24 +26,29 @@ class IO_Device:
         self.state = state #High or low
         self.pin = pin #pin #
         self.ras_pin = ras_pin
+        self.IO_type =  IO_type
         if(IO_type == "input"):
-            GPIO.setup(ras_pin, GPIO.IN)
+            #GPIO.setup(ras_pin, GPIO.IN) #uncomment for use
+            print("")
         else:
-            GPIO.setup(ras_pin, GPIO.OUT)        
+            print("")
+            #GPIO.setup(ras_pin, GPIO.OUT)  #  
+            # print("")    
 
     def setHigh(self):
         #will set the specific pin high
-        print("Setting", self.name,"high...")
+        print("Setting", self.name,"high...",bcolors.OK+"Done"+bcolors.RESET)
         self.state  = True
-        GPIO.output(self.ras_pin, GPIO.HIGH)
-        print(bcolors.OK+"Done"+bcolors.RESET)
+        #GPIO.output(self.ras_pin, GPIO.HIGH) #uncomment for use
 
     def setLow(self):
         #will set the specific pin low
-        print("Setting", self.name,"low...")
-        self.state  = False
-        GPIO.output(self.ras_pin, GPIO.LOW)
-        print(bcolors.OK+"Done"+bcolors.RESET)
+        if(self.IO_type == "output"):
+            print("Setting", self.name,"low...",bcolors.OK+"Done"+bcolors.RESET)
+            self.state  = False
+            #GPIO.output(self.ras_pin, GPIO.LOW) #uncomment for use
+        else:
+            print(bcolors.WARNING+"Warning"+bcolors.RESET, self.name, "is not a output pin and should not be set")
 
 
 #system functions 
@@ -55,6 +60,21 @@ def manual_start():
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start manually, exiting startup")
         return False
+    
+
+ #starting mechanical pump
+def mechanical_pump_start():
+    print("Starting mechanical pump...")
+    if(OUT1.state and Rough_SW.state):
+        OUT9.setHigh();
+        return True
+    else:
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start mechanical pump, exiting startup")
+        return False
+    
+    
+
+
 
 
 def shutdownSys():
@@ -64,7 +84,7 @@ def shutdownSys():
     Crossover.setLow()
     Auto.setLow()
     On_Reset.setLow()
-    Manual.setLow()
+    Manual.setLow() #this might cause  problems
     Vent.setLow()
     Rough_S2.setLow()
     HI_VAC_Valve.setLow()
@@ -84,6 +104,7 @@ def shutdownSys():
     OUT8.setLow()
     OUT9.setLow()
     print("Shutdown complete")
+    return True
 
 
 #initialization of the pins 
@@ -121,11 +142,10 @@ print("Initializtion complete!")
 #Below this is where the  actual logic will go!
 manual_start()
 time.sleep(5)
-print("TESTING: setting OUT1  high!")
-OUT1.setHigh()
-input(bcolors.OK+"Press any key to set OUT1 low"+bcolors.RESET)
-OUT1.setLow
-input(bcolors.OK+"Complete"+bcolors.RESET,"begining shutdown")
+
+mechanical_pump_start()
+time.sleep(5)
+
 shutdownSys()
 
 
