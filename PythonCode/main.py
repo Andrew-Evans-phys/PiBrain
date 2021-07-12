@@ -9,10 +9,13 @@
 ###########################################################
 
 import time
+import StateMachine
 #import RPi.GPIO as GPIO uncomment for use
 
 
 #GPIO.setmode(GPIO.BCM) #setting the pin layout style  to be BC #uncomment for use
+#state machine is created
+system = StateMachine.StateMachine("/Users/gk/Documents/PiBrain/PythonCode/outputfile.txt", "/Users/gk/Documents/PiBrain/PythonCode/tasklist.txt")
 
 class bcolors:
     OK = '\033[92m' #GREEN
@@ -64,57 +67,56 @@ def manual_start():
     print("Starting manual mode...")
     if(Start.state or On_Reset.state):
         OUT1.setHigh()
-        return True
+        return (True, True, "Manual mode")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start manually, exiting startup"+"\n")
-        return False
-    
+        return (True, False, "Manual mode")   
 
  #starting mechanical pump
 def mechanical_pump_start():
     print("Starting mechanical pump...")
     if(OUT1.state and Rough_SW.state):
         OUT9.setHigh();
-        return True
+        return (True, True, "Mechanical pump")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start mechanical pump, exiting startup"+"\n")
-        return False
+        return (True, False, "Mechanical pump")
     
 def roughing_system():
     print("Roughing the system...")
     if(OUT9.state and not HI_VAC_Valve.state and not Vent.state and Rough_S2.state and not Cryo_Rough.state and not Cryo_Purge.state):
         OUT3.setHigh()
-        return True
+        return (True, True, "Roughing system")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to rough system, exiting startup"+"\n")
-        return  0
+        return  (True, False, "Roughing system")
 
 def cryo_rough():
     print("Roughing cryo-system...")
     if(OUT9.state and not HI_VAC_Valve.state and not Rough_S2.state and not Vent.state and Cryo_Rough.state):
         OUT5.setHigh()
-        return 1
+        return (True, True, "Roughing cryo-system")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to cryo-rough system, exiting startup"+"\n")
-        return 0
+        return (True, False, "Roughing cryo-system")
 
 def open_sys_to_cryo_pump():
     print("Opening system to cryo-pump...")
     if(Crossover.state and Vacuum_In.state and not Rough_S2.state and not Vent.state and HI_VAC_Valve.state):
         OUT7.setHigh()
-        return 1
+        return (True, True, "Opening system to cryo-pump")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open system to cryo-pump, exiting startup"+"\n")
-        return 0
+        return (True, False, "Opening system to cryo-pump")
 
 def start_water_lock():
     print("Starting water lock...")
     if((Vacuum_In.state or OUT7.state) and not Vent.state and Water_Lock.state):
         OUT8.setHigh()
-        return 1
+        return (True, True, "Water lock")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open water lock, exiting startup"+"\n")
-        return 0
+        return (True, False, "Water lock")
         
 
 def shutdownSys():
@@ -129,6 +131,7 @@ def shutdownSys():
     OUT8.setLow()
     OUT9.setLow()
     print("Shutdown complete")
+    system.write_to_log((False, False, "Shutdown"))
     return True
 
 
@@ -165,24 +168,7 @@ print("Initializtion complete!")
 
     
 #Below this is where the  actual logic will go!
-manual_start()
-time.sleep(5)
-
-mechanical_pump_start()
-time.sleep(5)
-
-roughing_system()
-time.sleep(5)
-
-cryo_rough()
-time.sleep(5)
-
-open_sys_to_cryo_pump()
-time.sleep(5)
-
-start_water_lock()
-time.sleep(5)
-
+system.idle_state(manual_start, mechanical_pump_start, roughing_system, cryo_rough, open_sys_to_cryo_pump, start_water_lock)
 shutdownSys()
 
 
