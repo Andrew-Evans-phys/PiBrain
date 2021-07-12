@@ -51,6 +51,14 @@ class IO_Device:
             print(bcolors.WARNING+"Warning"+bcolors.RESET, self.name, "is not a output pin and should not be set")
 
 
+class StateMachine(): #I think the logic tree will be written here
+    def __init__(self, outputfile):
+        self.outputfile = outputfile
+
+    def write_to_log(self):
+        print("test") #should  write to a file if done correctly
+
+
 #system functions 
 def manual_start():
     print("Starting manual mode...")
@@ -58,7 +66,7 @@ def manual_start():
         OUT1.setHigh()
         return True
     else:
-        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start manually, exiting startup")
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start manually, exiting startup"+"\n")
         return False
     
 
@@ -69,31 +77,48 @@ def mechanical_pump_start():
         OUT9.setHigh();
         return True
     else:
-        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start mechanical pump, exiting startup")
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start mechanical pump, exiting startup"+"\n")
         return False
     
-    
+def roughing_system():
+    print("Roughing the system...")
+    if(OUT9.state and not HI_VAC_Valve.state and not Vent.state and Rough_S2.state and not Cryo_Rough.state and not Cryo_Purge.state):
+        OUT3.setHigh()
+        return True
+    else:
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to rough system, exiting startup"+"\n")
+        return  0
 
+def cryo_rough():
+    print("Roughing cryo-system...")
+    if(OUT9.state and not HI_VAC_Valve.state and not Rough_S2.state and not Vent.state and Cryo_Rough.state):
+        OUT5.setHigh()
+        return 1
+    else:
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to cryo-rough system, exiting startup"+"\n")
+        return 0
 
+def open_sys_to_cryo_pump():
+    print("Opening system to cryo-pump...")
+    if(Crossover.state and Vacuum_In.state and not Rough_S2.state and not Vent.state and HI_VAC_Valve.state):
+        OUT7.setHigh()
+        return 1
+    else:
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open system to cryo-pump, exiting startup"+"\n")
+        return 0
 
+def start_water_lock():
+    print("Starting water lock...")
+    if((Vacuum_In.state or OUT7.state) and not Vent.state and Water_Lock.state):
+        OUT8.setHigh()
+        return 1
+    else:
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open water lock, exiting startup"+"\n")
+        return 0
+        
 
 def shutdownSys():
     print("Shutting down...")
-    Start.setLow()
-    Stop.setLow()
-    Crossover.setLow()
-    Auto.setLow()
-    On_Reset.setLow()
-    Manual.setLow() #this might cause  problems
-    Vent.setLow()
-    Rough_S2.setLow()
-    HI_VAC_Valve.setLow()
-    Cryo_Rough.setLow()
-    Cryo_Purge.setLow()
-    Vacuum_In.setLow()
-    Rough_SW.setLow()
-    Water_Lock.setLow()
-    Vent_Auto.setLow()
     OUT1.setLow()
     OUT2.setLow()
     OUT3.setLow()
@@ -135,7 +160,7 @@ OUT5 = IO_Device("OUT5", "output", False, "0505",25)
 OUT6 = IO_Device("OUT6", "output", False, "0506",8)
 OUT7 = IO_Device("OUT7", "output", False, "0507",7)
 OUT8 = IO_Device("OUT8", "output", False, "0508",1)
-OUT9 = IO_Device("OUT9", "output", False, "0509",12)
+OUT9 = IO_Device("OUT9", "output", False, "0509",12) 
 print("Initializtion complete!")
 
     
@@ -144,6 +169,18 @@ manual_start()
 time.sleep(5)
 
 mechanical_pump_start()
+time.sleep(5)
+
+roughing_system()
+time.sleep(5)
+
+cryo_rough()
+time.sleep(5)
+
+open_sys_to_cryo_pump()
+time.sleep(5)
+
+start_water_lock()
 time.sleep(5)
 
 shutdownSys()
