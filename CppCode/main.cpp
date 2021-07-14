@@ -4,6 +4,7 @@
 #include "structures.h"
 #include "errors.h"
 #include <unistd.h>
+#include <wiringPi.h>
 
 using namespace std;
 

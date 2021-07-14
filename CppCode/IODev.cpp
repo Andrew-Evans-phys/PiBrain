@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "IODev.h"
-
+#include <wiringPi.h>
 
 using namespace std;
 
@@ -11,6 +11,9 @@ void IO_Device::device_init(bool default_on, string set_name, string set_type){
     type = set_type;
 }
 
+void IO_Device::shutDownSeq(){ \\make function that turns  off the pin
+
+}
 
 bool IO_Device::status(bool print_statement){
     if(print_statement){
