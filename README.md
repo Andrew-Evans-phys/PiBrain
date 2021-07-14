@@ -15,7 +15,7 @@
 
 # Usage
 Python based software aimed at controlling Cooke vacuum products MK-VII deposition system using a raspberry pi and a custom control circuit.
-This GitHub page will also include all the doacumentation for the circuit which the python will run on.
+This GitHub page will also include all the documentation for the circuit which the python will run on.
 
 # Authors
 Andrew Evans and Leo Janzen
