@@ -10,6 +10,8 @@
 
 import time
 import StateMachine
+import os
+
 #import RPi.GPIO as GPIO uncomment for use
 
 
@@ -40,27 +42,24 @@ class IO_Device:
 
     def setHigh(self):
         #will set the specific pin high
-        print("Setting", self.name,"high...",bcolors.OK+"Done"+bcolors.RESET)
-        self.state  = True
-        #GPIO.output(self.ras_pin, GPIO.HIGH) #uncomment for use
+        if(self.state):
+            print(self.name,"maintaining high")
+        else:
+            print("Setting", self.name,"high...",bcolors.OK+"Done"+bcolors.RESET)
+            self.state  = True
+            #GPIO.output(self.ras_pin, GPIO.HIGH) #uncomment for use
 
     def setLow(self):
         #will set the specific pin low
         if(self.IO_type == "output"):
-            print("Setting", self.name,"low...",bcolors.OK+"Done"+bcolors.RESET)
-            self.state  = False
-            #GPIO.output(self.ras_pin, GPIO.LOW) #uncomment for use
+            if(self.state):
+                print("Setting", self.name,"low...",bcolors.OK+"Done"+bcolors.RESET)
+                self.state  = False
+                #GPIO.output(self.ras_pin, GPIO.LOW) #uncomment for use
+            else:
+                print(self.name,"maintaining low")
         else:
             print(bcolors.WARNING+"Warning"+bcolors.RESET, self.name, "is not a output pin and should not be set")
-
-
-class StateMachine(): #I think the logic tree will be written here
-    def __init__(self, outputfile):
-        self.outputfile = outputfile
-
-    def write_to_log(self):
-        print("test") #should  write to a file if done correctly
-
 
 #system functions 
 def manual_start():
@@ -134,16 +133,41 @@ def shutdownSys():
     system.write_to_log((False, False, "Shutdown"))
     return True
 
+def system_status():
+    print(Start.name, Start.state)
+    print(Stop.name, Stop.state)
+    print(Crossover.name, Crossover.state) 
+    print(Auto.name, Auto.state) 
+    print(On_Reset.name, On_Reset.state) 
+    print(Manual.name, Manual.state) 
+    print(Vent.name, Vent.state) 
+    print(Rough_S2.name, Rough_S2.state)
+    print(HI_VAC_Valve.name, HI_VAC_Valve.state)
+    print(Cryo_Rough.name, Cryo_Rough.state)
+    print(Cryo_Purge.name, Cryo_Purge.state)
+    print(Vacuum_In.name, Vacuum_In.state)
+    print(Rough_SW.name, Rough_SW.state)
+    print(Water_Lock.name, Water_Lock.state) 
+    print(OUT1.name, OUT1.state) 
+    print(OUT2.name, OUT2.state) 
+    print(OUT3.name, OUT3.state)
+    print(OUT4.name, OUT4.state) 
+    print(OUT5.name, OUT5.state) 
+    print(OUT6.name, OUT6.state)
+    print(OUT7.name, OUT7.state)
+    print(OUT8.name, OUT8.state)
+    print(OUT9.name, OUT9.state) 
+
 
 #initialization of the pins 
 
 #inputs
-Start = IO_Device("Start", "input", False, "0000",26)
+Start = IO_Device("Start", "input", True, "0000",26)#testing
 Stop = IO_Device("Stop", "input", False, "0001",19)
 Crossover = IO_Device("Crossover", "input", False, "0002",13)
 Auto = IO_Device("Auto", "input", False, "0003",6)
 On_Reset = IO_Device("On_Reset", "input", False, "0004",5) 
-Manual = IO_Device("Manual", "input", False, "0005",0)
+Manual = IO_Device("Manual", "input", True, "0005",0)#testing
 Vent = IO_Device("Vent", "input", False, "0006",11)
 Rough_S2 = IO_Device("Rough_S2", "input", False, "0007",9)
 HI_VAC_Valve = IO_Device("HI_VAC_Valve", "input", False, "0008",10)
@@ -164,7 +188,10 @@ OUT6 = IO_Device("OUT6", "output", False, "0506",8)
 OUT7 = IO_Device("OUT7", "output", False, "0507",7)
 OUT8 = IO_Device("OUT8", "output", False, "0508",1)
 OUT9 = IO_Device("OUT9", "output", False, "0509",12) 
+os.system("rm /Users/gk/Documents/PiBrain/PythonCode/outputfile.txt")
 print("Initializtion complete!")
+system.write_to_log((True, True, "System init"))
+
 
     
 #Below this is where the  actual logic will go!

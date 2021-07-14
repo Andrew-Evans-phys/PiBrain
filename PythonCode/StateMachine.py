@@ -10,9 +10,13 @@ class StateMachine(): #I think the logic tree will be written here
     
     def write_to_log(self,job_stat):
         with open(self.outputfile, 'a') as outFile:
+            #try:
             if(job_stat[0]):
                 if(job_stat[1]):
-                    outFile.write(str(datetime.datetime.now()) +" "+job_stat[2]+ " completed, returning to queue"+"\n")#add time stamp here
+                    if(job_stat[2] == "ID CHECK"):
+                        outFile.write("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n") #this will need to be change to show status
+                    else:
+                        outFile.write(str(datetime.datetime.now()) +" "+job_stat[2]+ " completed, returning to queue"+"\n")#add time stamp here
                 else:
                     outFile.write(str(datetime.datetime.now()) +" "+job_stat[2]+ " didn't complete, conditions not met, returning to queue"+"\n")
             else:
@@ -20,6 +24,8 @@ class StateMachine(): #I think the logic tree will be written here
                     outFile.write(str(datetime.datetime.now())+ " Shutting system down"+"\n")
                 else:
                     outFile.write(str(datetime.datetime.now()) +" "+job_stat[2]+ " task failure, shutting system down"+"\n")
+
+
 
     def setTask(self):
         with open(self.inputfile, 'r') as inFile:
@@ -31,34 +37,37 @@ class StateMachine(): #I think the logic tree will be written here
         
     def idle_state(self, task1, task2, task3, task4, task5, task6):
         #self.write_to_log()
+        delay = 1
         self.setTask()
         i = 0
         read_condition =  True
         while(read_condition):
             job_stat =  task1()
             self.write_to_log(job_stat)
-            time.sleep(5)
+            time.sleep(delay)
             job_stat =  task2()
             self.write_to_log(job_stat)
-            time.sleep(5)
+            time.sleep(delay)
             job_stat =  task3()
             self.write_to_log(job_stat)
-            time.sleep(5)
+            time.sleep(delay)
             job_stat =  task4()
             self.write_to_log(job_stat)
-            time.sleep(5)
+            time.sleep(delay)
             job_stat =  task5()
             self.write_to_log(job_stat)
-            time.sleep(5)
+            time.sleep(delay)
             job_stat =  task6()
             self.write_to_log(job_stat)
-            time.sleep(5)
+            time.sleep(delay)
+            self.write_to_log((True, True, "ID CHECK"))
+            time.sleep(delay)
             if(bool(self.task[i%len(self.task)])):
-                print("Doing task")
+                print("Exting idle")
                 read_condition = False
             else:
-                print("No tasks available")
-            time.sleep(1)
+                print("Looping idle")
+            time.sleep(delay)
             i += 1
             if(len(self.task)%i == 0):
                 self.setTask()
