@@ -22,55 +22,45 @@ class StateMachine(): #I think the logic tree will be written here
                 else:
                     outFile.write(str(datetime.datetime.now()) +" "+job_stat[2]+ " task failure, shutting system down"+"\n")
 
-
-
-    def setTask(self):
-        with open(self.inputfile, 'r') as inFile:
-            for line in inFile:
-                try:
-                    self.task.append(int(line[:-1]))
-                except(ValueError):
-                    pass
-
     def idleTaskCheck(self, newTask, oldTask):
-        if(oldTask != newTask()):
-            oldTask = newTask()
+        newTaskCheck =  newTask()
+        if(oldTask != newTaskCheck):
+            oldTask = newTaskCheck
             self.write_to_log(oldTask)
         return oldTask
 
-    def idle_state(self, task1, task2, task3, task4, task5, task6):
-        #self.write_to_log()
-        delay = 1
-        self.setTask()
-        i = 0
-        read_condition =  True
+    def idle_state(self, task1, task2, task3, task4, task5, task6, update_pins):
+        #Sets machine step wait time
+        delay = 1 
+        #initializes tasks
         task1_last = (False, False, "Default")
         task2_last = (False, False, "Default")
         task3_last = (False, False, "Default")
         task4_last = (False, False, "Default")
         task5_last = (False, False, "Default")
         task6_last = (False, False, "Default")
-        while(read_condition):
-            task1_last = self.idleTaskCheck(task1, task1_last)
+        #Idle loop
+        machine_on = True
+        while(machine_on):
+            #update the pin information
+            update_pins()
+            #Machine logic based on updated pins 
+            task1_last = self.idleTaskCheck(task1, task1_last) #manual_start
             time.sleep(delay)
-            task2_last = self.idleTaskCheck(task2, task2_last)
+            task2_last = self.idleTaskCheck(task2, task2_last) #mechanical_pump_start
             time.sleep(delay)
-            task3_last = self.idleTaskCheck(task3, task3_last)
+            task3_last = self.idleTaskCheck(task3, task3_last) #roughing_system
             time.sleep(delay)
-            task4_last = self.idleTaskCheck(task4, task4_last)
+            task4_last = self.idleTaskCheck(task4, task4_last) #cryo_rough
             time.sleep(delay)
-            task5_last = self.idleTaskCheck(task5, task5_last)
+            task5_last = self.idleTaskCheck(task5, task5_last) #open_sys_to_cryo_pump
             time.sleep(delay)
-            task6_last = self.idleTaskCheck(task6, task6_last)
+            task6_last = self.idleTaskCheck(task6, task6_last) #start_water_lock
             time.sleep(delay)
-            if(bool(self.task[i%len(self.task)])):
-                print("Exting idle")
-                read_condition = False
-            else:
-                print("Looping idle")
-            time.sleep(delay)
-            i += 1
-            if(len(self.task)%i == 0):
-                self.setTask()
+            #Checking to make sure no task has thrown a shutdown code
+            if(not task1_last[0] or not task2_last[0] or not task3_last[0] or not task4_last[0] or not task5_last[0] or not task6_last[0]): 
+                print("Exiting idle")
+                machine_on = False
 
-#system = StateMachine("misc", "/Users/gk/Documents/PiBrain/PythonCode/tasklist.txt")
+
+
