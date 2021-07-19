@@ -9,6 +9,7 @@
 ###########################################################
 
 import time
+import datetime
 import StateMachine
 import os
 
@@ -17,7 +18,8 @@ import os
 
 #GPIO.setmode(GPIO.BCM) #setting the pin layout style  to be BC #uncomment for use
 #state machine is created
-system = StateMachine.StateMachine("/Users/gk/Documents/PiBrain/PythonCode/outputfile.txt", "/Users/gk/Documents/PiBrain/PythonCode/tasklist.txt")
+start_time = datetime.datetime.now()
+system = StateMachine.StateMachine("/Users/gk/Documents/PiBrain/PythonCode/outputfile"+str(start_time).translate(str.maketrans({" ":"_"}))+".txt", "/Users/gk/Documents/PiBrain/PythonCode/tasklist.txt")
 
 class bcolors:
     OK = '\033[92m' #GREEN
@@ -188,7 +190,7 @@ OUT6 = IO_Device("OUT6", "output", False, "0506",8)
 OUT7 = IO_Device("OUT7", "output", False, "0507",7)
 OUT8 = IO_Device("OUT8", "output", False, "0508",1)
 OUT9 = IO_Device("OUT9", "output", False, "0509",12) 
-os.system("rm /Users/gk/Documents/PiBrain/PythonCode/outputfile.txt")
+
 print("Initializtion complete!")
 system.write_to_log((True, True, "System init"))
 
