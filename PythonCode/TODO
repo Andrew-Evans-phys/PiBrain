@@ -1,1 +1,2 @@
 Fix while loop
+make idle output better (dont write each check only changes)

@@ -12,7 +12,7 @@
 2021-07-14 09:43:02.118748 Roughing cryo-system didn't complete, conditions not met, returning to queue
 2021-07-14 09:43:03.121769 Opening system to cryo-pump didn't complete, conditions not met, returning to queue
 2021-07-14 09:43:04.126607 Water lock didn't complete, conditions not met, returning to queue
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++a+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 2021-07-14 09:43:07.134585 Manual mode completed, returning to queue
 2021-07-14 09:43:08.139604 Mechanical pump didn't complete, conditions not met, returning to queue
 2021-07-14 09:43:09.145129 Roughing system didn't complete, conditions not met, returning to queue
