@@ -13,10 +13,7 @@ class StateMachine(): #I think the logic tree will be written here
             #try:
             if(job_stat[0]):
                 if(job_stat[1]):
-                    if(job_stat[2] == "ID CHECK"):
-                        outFile.write("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n") #this will need to be change to show status
-                    else:
-                        outFile.write(str(datetime.datetime.now()) +" "+job_stat[2]+ " completed, returning to queue"+"\n")#add time stamp here
+                    outFile.write(str(datetime.datetime.now()) +" "+job_stat[2]+ " completed, returning to queue"+"\n")#add time stamp here
                 else:
                     outFile.write(str(datetime.datetime.now()) +" "+job_stat[2]+ " didn't complete, conditions not met, returning to queue"+"\n")
             else:
@@ -34,33 +31,37 @@ class StateMachine(): #I think the logic tree will be written here
                     self.task.append(int(line[:-1]))
                 except(ValueError):
                     pass
-        
+
+    def idleTaskCheck(self, newTask, oldTask):
+        if(oldTask != newTask()):
+            oldTask = newTask()
+            self.write_to_log(oldTask)
+        return oldTask
+
     def idle_state(self, task1, task2, task3, task4, task5, task6):
         #self.write_to_log()
         delay = 1
         self.setTask()
         i = 0
         read_condition =  True
+        task1_last = (False, False, "Default")
+        task2_last = (False, False, "Default")
+        task3_last = (False, False, "Default")
+        task4_last = (False, False, "Default")
+        task5_last = (False, False, "Default")
+        task6_last = (False, False, "Default")
         while(read_condition):
-            job_stat =  task1()
-            self.write_to_log(job_stat)
+            task1_old = self.idleTaskCheck(task1, task1_last)
             time.sleep(delay)
-            job_stat =  task2()
-            self.write_to_log(job_stat)
+            task2_old = self.idleTaskCheck(task2, task2_last)
             time.sleep(delay)
-            job_stat =  task3()
-            self.write_to_log(job_stat)
+            task3_old = self.idleTaskCheck(task3, task3_last)
             time.sleep(delay)
-            job_stat =  task4()
-            self.write_to_log(job_stat)
+            task4_old = self.idleTaskCheck(task4, task4_last)
             time.sleep(delay)
-            job_stat =  task5()
-            self.write_to_log(job_stat)
+            task5_old = self.idleTaskCheck(task5, task5_last)
             time.sleep(delay)
-            job_stat =  task6()
-            self.write_to_log(job_stat)
-            time.sleep(delay)
-            self.write_to_log((True, True, "ID CHECK"))
+            task6_old = self.idleTaskCheck(task6, task6_last)
             time.sleep(delay)
             if(bool(self.task[i%len(self.task)])):
                 print("Exting idle")
