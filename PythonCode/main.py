@@ -9,6 +9,7 @@
 ###########################################################
 
 import time
+import datetime
 import StateMachine
 import os
 
@@ -16,8 +17,13 @@ import os
 
 
 #GPIO.setmode(GPIO.BCM) #setting the pin layout style  to be BC #uncomment for use
+
+#Terminal cleared
+os.system("cls")
+
 #state machine is created
-system = StateMachine.StateMachine("/Users/gk/Documents/PiBrain/PythonCode/outputfile.txt", "/Users/gk/Documents/PiBrain/PythonCode/tasklist.txt")
+start_time = datetime.datetime.now()
+system = StateMachine.StateMachine("/Users/gk/Documents/PiBrain/PythonCode/outputfile"+str(start_time).translate(str.maketrans({" ":"_"}))+".txt", "/Users/gk/Documents/PiBrain/PythonCode/tasklist.txt")
 
 class bcolors:
     OK = '\033[92m' #GREEN
@@ -61,14 +67,15 @@ class IO_Device:
         else:
             print(bcolors.WARNING+"Warning"+bcolors.RESET, self.name, "is not a output pin and should not be set")
 
+
 #system functions 
 def manual_start():
     print("Starting manual mode...")
-    if(Start.state or On_Reset.state):
+    if(Start.state or On_Reset.state): #Checking to ssee if these are set high, will need to def read GPIO before this
         OUT1.setHigh()
         return (True, True, "Manual mode")
     else:
-        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start manually, exiting startup"+"\n")
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start manually, returning to queue"+"\n")
         return (True, False, "Manual mode")   
 
  #starting mechanical pump
@@ -78,7 +85,7 @@ def mechanical_pump_start():
         OUT9.setHigh();
         return (True, True, "Mechanical pump")
     else:
-        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start mechanical pump, exiting startup"+"\n")
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start mechanical pump, returning to queue"+"\n")
         return (True, False, "Mechanical pump")
     
 def roughing_system():
@@ -87,7 +94,7 @@ def roughing_system():
         OUT3.setHigh()
         return (True, True, "Roughing system")
     else:
-        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to rough system, exiting startup"+"\n")
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to rough system, returning to queue"+"\n")
         return  (True, False, "Roughing system")
 
 def cryo_rough():
@@ -96,7 +103,7 @@ def cryo_rough():
         OUT5.setHigh()
         return (True, True, "Roughing cryo-system")
     else:
-        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to cryo-rough system, exiting startup"+"\n")
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to cryo-rough system, returning to queue"+"\n")
         return (True, False, "Roughing cryo-system")
 
 def open_sys_to_cryo_pump():
@@ -105,8 +112,17 @@ def open_sys_to_cryo_pump():
         OUT7.setHigh()
         return (True, True, "Opening system to cryo-pump")
     else:
-        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open system to cryo-pump, exiting startup"+"\n")
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open system to cryo-pump, returning to queue"+"\n")
         return (True, False, "Opening system to cryo-pump")
+
+def vent_System():
+    print("Checking vent conditions")
+    if(not HI_VAC_Valve.state and not Rough_S2.state and Vent.state):
+        OUT2.setHigh()
+        return (True, True, "venting system")
+    else:
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open vent system, exiting returning to queue"+"\n")
+        return (True, False, "venting system")
 
 def start_water_lock():
     print("Starting water lock...")
@@ -114,10 +130,93 @@ def start_water_lock():
         OUT8.setHigh()
         return (True, True, "Water lock")
     else:
-        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open water lock, exiting startup"+"\n")
+        print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open water lock, returning to queue"+"\n")
         return (True, False, "Water lock")
-        
 
+def readPinsLoop(file_path_to_pin_input):
+    with open(file_path_to_pin_input, 'r') as f:
+        print("Reading "+Start.name+" with GPIO") #read Start
+        if(bool(int(f.readline()[0]))):
+            Start.state = True
+        else:
+            Start.state= False    
+        print("Reading "+Stop.name+" with GPIO") #read Stop
+        if(bool(int(f.readline()[0]))):
+            Stop.state = True
+        else:
+            Stop.state= False    
+        print("Reading "+Crossover.name+" with GPIO") #read Crossover
+        if(bool(int(f.readline()[0]))):
+            Crossover.state = True
+        else:
+            Crossover.state= False   
+        print("Reading "+Auto.name+" with GPIO") #read Auto
+        if(bool(int(f.readline()[0]))):
+            Auto.state = True
+        else:
+            Auto.state= False     
+        print("Reading "+On_Reset.name+" with GPIO") #read On_Reset
+        if(bool(int(f.readline()[0]))):
+            On_Reset.state = True
+        else:
+            On_Reset.state= False         
+        print("Reading "+Manual.name+" with GPIO") #read Manual
+        if(bool(int(f.readline()[0]))):
+            Manual.state = True
+        else:
+            Manual.state= False  
+        print("Reading "+Vent.name+" with GPIO") #read Vent
+        if(bool(int(f.readline()[0]))):
+            Vent.state = True
+        else:
+            Vent.state= False  
+        print("Reading "+Rough_S2.name+" with GPIO") #read Rough_S2
+        if(bool(int(f.readline()[0]))):
+            Rough_S2.state = True
+        else:
+            Rough_S2.state= False 
+        print("Reading "+HI_VAC_Valve.name+" with GPIO") #read HI_VAC_Valve
+        if(bool(int(f.readline()[0]))):
+            HI_VAC_Valve.state = True
+        else:
+            HI_VAC_Valve.state= False 
+        print("Reading "+Cryo_Rough.name+" with GPIO") #read Cryo_Rough
+        if(bool(int(f.readline()[0]))):
+            Cryo_Rough.state = True
+        else:
+            Cryo_Rough.state= False   
+        print("Reading "+Cryo_Purge.name+" with GPIO") #read Cryo_Purge
+        if(bool(int(f.readline()[0]))):
+            Cryo_Purge.state = True
+        else:
+            Cryo_Purge.state= False  
+        print("Reading "+Vacuum_In.name+" with GPIO") #read Vacuum_In
+        if(bool(int(f.readline()[0]))):
+            Vacuum_In.state = True
+        else:
+            Vacuum_In.state= False  
+        print("Reading "+Rough_SW.name+" with GPIO") #read Rough_SW
+        if(bool(int(f.readline()[0]))):
+            Rough_SW.state = True
+        else:
+            Rough_SW.state= False 
+        print("Reading "+Water_Lock.name+" with GPIO") #read Water_Lock
+        if(bool(int(f.readline()[0]))):
+            Water_Lock.state = True
+        else:
+            Water_Lock.state= False 
+        print("Reading "+Vent_Auto.name+" with GPIO") #read Vent_Auto
+        if(bool(int(f.readline()[0]))):
+            Vent_Auto.state = True
+        else:
+            Vent_Auto.state= False 
+        print()
+        if(Stop.state):
+            return 1
+        else:
+            return 0
+
+#System shutdown code, always run upon exiting the code
 def shutdownSys():
     print("Shutting down...")
     OUT1.setLow()
@@ -133,6 +232,7 @@ def shutdownSys():
     system.write_to_log((False, False, "Shutdown"))
     return True
 
+#prints the status of the system, only used when debugging
 def system_status():
     print(Start.name, Start.state)
     print(Stop.name, Stop.state)
@@ -160,14 +260,13 @@ def system_status():
 
 
 #initialization of the pins 
-
 #inputs
-Start = IO_Device("Start", "input", True, "0000",26)#testing
+Start = IO_Device("Start", "input", True, "0000",26)#testing should be set to false by  default
 Stop = IO_Device("Stop", "input", False, "0001",19)
 Crossover = IO_Device("Crossover", "input", False, "0002",13)
 Auto = IO_Device("Auto", "input", False, "0003",6)
-On_Reset = IO_Device("On_Reset", "input", False, "0004",5) 
-Manual = IO_Device("Manual", "input", True, "0005",0)#testing
+On_Reset = IO_Device("On_Reset", "input", True, "0004",5) #testing should be set to false by  default
+Manual = IO_Device("Manual", "input", True, "0005",0)#testing should be set to false by  default
 Vent = IO_Device("Vent", "input", False, "0006",11)
 Rough_S2 = IO_Device("Rough_S2", "input", False, "0007",9)
 HI_VAC_Valve = IO_Device("HI_VAC_Valve", "input", False, "0008",10)
@@ -188,14 +287,11 @@ OUT6 = IO_Device("OUT6", "output", False, "0506",8)
 OUT7 = IO_Device("OUT7", "output", False, "0507",7)
 OUT8 = IO_Device("OUT8", "output", False, "0508",1)
 OUT9 = IO_Device("OUT9", "output", False, "0509",12) 
-os.system("rm /Users/gk/Documents/PiBrain/PythonCode/outputfile.txt")
 print("Initializtion complete!")
 system.write_to_log((True, True, "System init"))
 
-
-    
 #Below this is where the  actual logic will go!
-system.idle_state(manual_start, mechanical_pump_start, roughing_system, cryo_rough, open_sys_to_cryo_pump, start_water_lock)
+system.idle_state(manual_start, mechanical_pump_start, roughing_system, cryo_rough, open_sys_to_cryo_pump, start_water_lock, vent_System, readPinsLoop)
 shutdownSys()
 
 
