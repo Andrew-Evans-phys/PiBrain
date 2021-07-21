@@ -1,2 +1,5 @@
-Fix while loop
-Need to create a GPIO read loop to update IO_Devices
+Stop the read loop from dying when it doesn't understand input!
+
+
+
+
