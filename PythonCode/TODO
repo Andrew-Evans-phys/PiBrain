@@ -1,5 +1,8 @@
-Stop the read loop from dying when it doesn't understand input!
+Stop the read loop from dying when it doesn't understand input! lol
 
+Make the code  always run the shutdown sequence
 
+Add the help documentation 
 
+Find out why shutdown() throws a true 
 
