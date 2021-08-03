@@ -25,5 +25,5 @@ Email: evansa@sonoma.edu
 Discord: Andrew Evans#4366
 
 # Documentation
-The documentation can be found by clicking <a href="https://www.google.com/" target="_blank">here</a>!
+The documentation can be found by clicking <a href="https://github.com/Andrew-Evans-phys/PiBrain/blob/dev/Documentation/PiBrain_Documentation.pdf" target="_blank">here</a>!
 
