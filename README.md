@@ -6,7 +6,7 @@
 - [Usage](#usage)
 - [Authors](#Authors)
 - [Contact](#Contact)
-- [Development](#development)
+- [Documentation](#Documentation)
 
 
 
@@ -24,6 +24,6 @@ Andrew Evans and Leo Janzen
 Email: evansa@sonoma.edu                                                                          
 Discord: Andrew Evans#4366
 
-# Development
-The actual machine logic is currently being implemented. The next phase of development will be to add a
-functional task oriented systems for controlling the order in which the machine is run!
+# Documentation
+The documentation can be found by clicking <a href="https://www.google.com/" target="_blank">here</a>!
+
