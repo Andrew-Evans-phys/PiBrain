@@ -12,7 +12,6 @@ import time
 import datetime
 import StateMachine
 import os
-
 #import RPi.GPIO as GPIO uncomment for use
 
 
@@ -26,35 +25,40 @@ start_time = datetime.datetime.now()
 system = StateMachine.StateMachine("/Users/gk/Documents/PiBrain/PythonCode/outputfile"+str(start_time).translate(str.maketrans({" ":"_"}))+".txt", "/Users/gk/Documents/PiBrain/PythonCode/tasklist.txt")
 
 class bcolors:
+    # Allows for text color to be set in print statements  
     OK = '\033[92m' #GREEN
     WARNING = '\033[93m' #YELLOW
     FAIL = '\033[91m' #RED
     RESET = '\033[0m' #RESET COLOR
 
 class IO_Device:
+    # Creation of the input output device
     def __init__(self, name, IO_type, state, pin, ras_pin):
         self.name = name  #name of action
         self.state = state #High or low
         self.pin = pin #pin #
-        self.ras_pin = ras_pin
-        self.IO_type =  IO_type
+        self.ras_pin = ras_pin  #pin on the raspberry  pi
+        self.IO_type =  IO_type #input or output
         if(IO_type == "input"):
             #GPIO.setup(ras_pin, GPIO.IN) #uncomment for use
             print("")
         else:
             print("")
-            #GPIO.setup(ras_pin, GPIO.OUT)  #  
+            #GPIO.setup(ras_pin, GPIO.OUT)  #uncomment for use
             # print("")    
 
     def setHigh(self):
         #will set the specific pin high
-        if(self.state):
-            print(self.name,"maintaining high")
+        if(self.IO_type == "output"):
+            if(self.state):
+                print(self.name,"maintaining high")
+            else:
+                print("Setting", self.name,"high...",bcolors.OK+"Done"+bcolors.RESET)
+                self.state  = True
+                #GPIO.output(self.ras_pin, GPIO.HIGH) #uncomment for use
         else:
-            print("Setting", self.name,"high...",bcolors.OK+"Done"+bcolors.RESET)
-            self.state  = True
-            #GPIO.output(self.ras_pin, GPIO.HIGH) #uncomment for use
-
+            print(bcolors.WARNING+"Warning"+bcolors.RESET, self.name, "is not a output pin and should not be set")
+            
     def setLow(self):
         #will set the specific pin low
         if(self.IO_type == "output"):
@@ -70,6 +74,7 @@ class IO_Device:
 
 #system functions 
 def manual_start():
+    #runs through the starting sequence
     print("Starting manual mode...")
     if(Start.state or On_Reset.state): #Checking to ssee if these are set high, will need to def read GPIO before this
         OUT1.setHigh()
@@ -78,62 +83,75 @@ def manual_start():
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start manually, returning to queue"+"\n")
         return (True, False, "Manual mode")   
 
- #starting mechanical pump
+
 def mechanical_pump_start():
+    #starting mechanical pump
     print("Starting mechanical pump...")
     if(OUT1.state and Rough_SW.state):
         OUT9.setHigh();
         return (True, True, "Mechanical pump")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to start mechanical pump, returning to queue"+"\n")
+        OUT9.setLow();
         return (True, False, "Mechanical pump")
     
 def roughing_system():
+    #starts the roughing of the system
     print("Roughing the system...")
     if(OUT9.state and not HI_VAC_Valve.state and not Vent.state and Rough_S2.state and not Cryo_Rough.state and not Cryo_Purge.state):
         OUT3.setHigh()
         return (True, True, "Roughing system")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to rough system, returning to queue"+"\n")
+        OUT3.setLow()
         return  (True, False, "Roughing system")
 
 def cryo_rough():
+    #starts  the roughing of the cryo system
     print("Roughing cryo-system...")
     if(OUT9.state and not HI_VAC_Valve.state and not Rough_S2.state and not Vent.state and Cryo_Rough.state):
         OUT5.setHigh()
         return (True, True, "Roughing cryo-system")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to cryo-rough system, returning to queue"+"\n")
+        OUT5.setLow()
         return (True, False, "Roughing cryo-system")
 
 def open_sys_to_cryo_pump():
+    #opens the system to the cryo pump
     print("Opening system to cryo-pump...")
     if(Crossover.state and Vacuum_In.state and not Rough_S2.state and not Vent.state and HI_VAC_Valve.state):
         OUT7.setHigh()
         return (True, True, "Opening system to cryo-pump")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open system to cryo-pump, returning to queue"+"\n")
+        OUT7.setLow()
         return (True, False, "Opening system to cryo-pump")
 
 def vent_System():
+    #Vents the system
     print("Checking vent conditions")
     if(not HI_VAC_Valve.state and not Rough_S2.state and Vent.state):
         OUT2.setHigh()
         return (True, True, "venting system")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open vent system, exiting returning to queue"+"\n")
+        OUT2.setLow()
         return (True, False, "venting system")
 
 def start_water_lock():
+    #starts the water lock
     print("Starting water lock...")
     if((Vacuum_In.state or OUT7.state) and not Vent.state and Water_Lock.state):
         OUT8.setHigh()
         return (True, True, "Water lock")
     else:
         print(bcolors.FAIL+"ERROR"+bcolors.RESET, "failed to open water lock, returning to queue"+"\n")
+        OUT8.setLow()
         return (True, False, "Water lock")
 
 def readPinsLoop(file_path_to_pin_input):
+    #reads the pins (currently in the text file implementation)
     with open(file_path_to_pin_input, 'r') as f:
         print("Reading "+Start.name+" with GPIO") #read Start
         if(bool(int(f.readline()[0]))):
@@ -216,8 +234,9 @@ def readPinsLoop(file_path_to_pin_input):
         else:
             return 0
 
-#System shutdown code, always run upon exiting the code
+
 def shutdownSys():
+    #System shutdown code, always run upon exiting the code
     print("Shutting down...")
     OUT1.setLow()
     OUT2.setLow()
@@ -230,10 +249,10 @@ def shutdownSys():
     OUT9.setLow()
     print("Shutdown complete")
     system.write_to_log((False, False, "Shutdown"))
-    return True
+    return True #???
 
-#prints the status of the system, only used when debugging
 def system_status():
+    #prints the status of the system, only used when debugging
     print(Start.name, Start.state)
     print(Stop.name, Stop.state)
     print(Crossover.name, Crossover.state) 
@@ -290,7 +309,7 @@ OUT9 = IO_Device("OUT9", "output", False, "0509",12)
 print("Initializtion complete!")
 system.write_to_log((True, True, "System init"))
 
-#Below this is where the  actual logic will go!
+#Below this is the actual logic being run
 system.idle_state(manual_start, mechanical_pump_start, roughing_system, cryo_rough, open_sys_to_cryo_pump, start_water_lock, vent_System, readPinsLoop)
 shutdownSys()
 
