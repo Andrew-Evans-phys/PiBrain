@@ -6,3 +6,7 @@ Add the help documentation
 
 Find out why shutdown() throws a true 
 
+Add toggle for cache clearing
+
+Make sure task[] isn't used anymore in statemachine.py
+

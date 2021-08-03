@@ -49,13 +49,16 @@ class IO_Device:
 
     def setHigh(self):
         #will set the specific pin high
-        if(self.state):
-            print(self.name,"maintaining high")
+        if(self.IO_type == "output"):
+            if(self.state):
+                print(self.name,"maintaining high")
+            else:
+                print("Setting", self.name,"high...",bcolors.OK+"Done"+bcolors.RESET)
+                self.state  = True
+                #GPIO.output(self.ras_pin, GPIO.HIGH) #uncomment for use
         else:
-            print("Setting", self.name,"high...",bcolors.OK+"Done"+bcolors.RESET)
-            self.state  = True
-            #GPIO.output(self.ras_pin, GPIO.HIGH) #uncomment for use
-
+            print(bcolors.WARNING+"Warning"+bcolors.RESET, self.name, "is not a output pin and should not be set")
+            
     def setLow(self):
         #will set the specific pin low
         if(self.IO_type == "output"):
