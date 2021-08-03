@@ -1,0 +1,37 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Description}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Purpose}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Contact information}{2}{subsection.1.3}%
+\contentsline {section}{\numberline {2}Software}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Bash scripts}{3}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Clearing output cache}{3}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Automated startup}{3}{subsubsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.2}State machine}{4}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Imports}{4}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}State machine class}{4}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}write\_to\_log}{4}{subsubsection.2.2.3}%
+\contentsline {subsubsection}{\numberline {2.2.4}idleTaskCheck}{6}{subsubsection.2.2.4}%
+\contentsline {subsubsection}{\numberline {2.2.5}idle\_state}{6}{subsubsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.3}Main}{7}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Manual mode}{7}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Imports}{7}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}bcolors}{7}{subsubsection.2.3.3}%
+\contentsline {subsubsection}{\numberline {2.3.4}IO\_Devices}{7}{subsubsection.2.3.4}%
+\contentsline {subsubsection}{\numberline {2.3.5}Tasks}{8}{subsubsection.2.3.5}%
+\contentsline {subsubsection}{\numberline {2.3.6}Pin definitions}{9}{subsubsection.2.3.6}%
+\contentsline {subsubsection}{\numberline {2.3.7}Function}{9}{subsubsection.2.3.7}%
+\contentsline {section}{\numberline {3}Hardware}{9}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Raspberry pi}{9}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Deposition machine}{9}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}PLC}{9}{subsubsection.3.2.1}%
+\contentsline {section}{\numberline {4}Installation}{11}{section.4}%
+\contentsline {section}{\numberline {5}Future work}{11}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Combination of bash scripts with python}{11}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}write\_to\_log rework}{11}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Idle exit}{11}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Main file split}{11}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Deposition controller pi}{11}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Web interface}{11}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}GUI interface}{11}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}Automatic mode}{11}{subsection.5.8}%
+\contentsline {subsection}{\numberline {5.9}IO\_Device class change}{11}{subsection.5.9}%
