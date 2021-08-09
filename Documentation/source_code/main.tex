@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[titlepage]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -33,7 +33,7 @@ To contact the original creator (Andrew) please use the following resources:
 \end{itemize}
 To contact the creator of the hardware (Leo) please use the followiing 
 \begin{itemize}
-    \item Email: lpjanzen@ucdavis.edu
+    \item Email: lpjanzen@ucdavis.edu (only good till 2024)
 \end{itemize}
 
 
@@ -110,7 +110,7 @@ Table~\ref{table:returnl} shows what the different combinations of trues and fal
 \end{table} 
 
 
-While this system works it is definitely another point in the code which should be reworked in the future, see Section~\ref{section:future}.
+While this system works it is definitely another point in the code which should be reworked in the future, see Section~\ref{section:rework-log}.
 \subsubsection{idleTaskCheck}
 This method simply compares the last task with the current task looking to see if there had been a change in the task's state. If the task's state had changed then the function writes this to the log file. This was designed so that the log file would only report changes in task, reducing the overall space used on the raspberry pi.
 
@@ -166,6 +166,7 @@ The first method (other than init) is the setHigh method. This method sets outpu
 Next is the setLow method. This method serves the exact same purpose as the setHigh method but sets the pin low. These two methods could technically be done in one method taking an argument for setting high vs low, however, this was decided against to improve readability.\\
 
 \subsubsection{Tasks}
+\label{section:tasks}
 The tasks are the main functions which the machine communicates to the state machine. Potential changes to this organization are discussed in Section~\ref{section:mainsplit}. The general idea is that the tasks contain simple logic conditions which result in setting pins using the setHigh/Low methods and then the task returns a three-tuple as discussed in Section~\ref{section:logwrite}. To see the logic for each task see Fig~\ref{fig:ladder}. \\
 
 There are three task that do show up on Fig~\ref{fig:ladder}. These tasks do not correspond to a piece of the physical machine, but rather they are used for lower level actions. The three functions are: readPinsLoop, shutdownSys, and system\_status. \\
@@ -231,6 +232,7 @@ The pins are fully defined in the code, however for the sake of convenience thei
 There are two main pieces of hardware that make up the PiBrain, there is the raspberry pi, the ``Brain'', and there is the PCB, the ``nervous system''. This section will aim to cover the specifics of each. Attached with this PDF there will be schematics of the hardware, with CAD files. The main goal of this is to have easy documentation to help with repairs and future work. There will also be a subsection detailing the computer that the PiBrain is replacing and hardware which PiBrain will control.
 
 \subsection{Overview}
+\label{section:hardware_over}
 This board interfaces between a Cooke MK-VII Vacuum Deposition Machine and a Raspberry Pi Zero w. It has been designed to replace the Omron Sysmac C20, and thus copies the input/output schema of the C20.\\
 
 Input COMs should be connected to +24V. Raspberry Pi inputs are \textbf{normally high} (3.3V). When an IN is connected to ground, the corresponding LED will illuminate and the corresponding Raspberry Pi pin will be pulled low (0V).\\
@@ -293,8 +295,12 @@ This section will give detail on the PCB which the raspberry pi is attached to. 
 
 
 \subsection{Case}
+Due to the time constraints of the project this was not able to be worked on in the original design process. The case for PiBrain does not currently exist. This section was included so that whoever in the future designs it can put the specifications here.\\
+
+It should be noted that PiBrain was designed to have a case. There are through holes on the PCB and raspberry pi that put there to allow a case to attach to both. See Section~\ref{section:hardware_over} for more details on grounding on the board to the case
 
 \subsection{Deposition machine}
+The deposition machine has its own set of documentation separate from this. The documentation can be found by asking Dr. Ramachandran.
 
 \subsubsection{PLC}
 This is a direct copy of what was used to run the PLC, and what the PiBrain was adapted from. \textbf{Disclaimer:} This table is not fully understood\footnote{That is not a joke}.
@@ -336,40 +342,78 @@ This is a direct copy of what was used to run the PLC, and what the PiBrain was 
 For more information on what the codes in Fig~\ref{fig:ladder} please see Section~\ref{section:pin_def}
 
 \section{Installation}
-At the time of this documents creation the PiBrain is not installed on the deposition machine. This task will be left as work for the next person to take on this project\footnote{I hope that you enjoy your work on PiBrain :)}. The installation should happen in two parts: fitting, and wiring. The PiBrain will be put inside a case which will have mounting holes, bolts will be fit through the mounting holes into newly drilled holes in the deposition machine\footnote{With some clever design the PiBrain case could attach to the deposition machine in the same way that the PLC attached to the machine!}. The wiring will relatively trivial compared to the rest of the process as long as the user labels the wires before they remove them from the original hardware.
+At the time of this documents creation the PiBrain is not installed on the deposition machine. This task will be left as work for the next person to take on this project\footnote{I hope that you enjoy your work on PiBrain :)}. The installation should happen in three parts: fitting, wiring, and software installation. 
+
+\subsection{Fitting}
+The PiBrain will be put inside a case which will have mounting holes, bolts will be fit through the mounting holes into newly drilled holes in the deposition machine\footnote{With some clever design the PiBrain case could attach to the deposition machine in the same way that the PLC attached to the machine!}.\\
+
+\subsection{Wiring}
+The wiring will relatively trivial compared to the rest of the process as long as the user labels the wires before they remove them from the original hardware. See Table~\ref{table:pin_def_t} and \ref{table:PLClogic} for information on wiring.\\
+
+\subsection{software installation and configuration}
+The last part of the installation will be to install an operating system on the raspberry pi, and load the software onto it. It is suggested that the OS used is Raspberry Pi OS (previously called Raspbian), a link can be found here: \href{https://www.raspberrypi.org/software/operating-systems/}{https://www.raspberrypi.org/software/operating-systems/}\footnote{Click to go to download page}. This is the suggested OS as this OS works on all raspberry pis and is currently maintained. Once the raspberry pi has an operating system the software should be downloaded from the web to the raspberry pi. The pi should also be configured to have a static IP address, and SSH capabilities. PiBrain will have no monitor, so it is very important that there exists an SSH connection on a static IP to allow for interfacing with PiBrain after the initial installation. It is also suggested that the startCode.sh script is configured to run on startup of the pi so that you do not need to SSH into the raspberry pi each time to start the code.\\
+
+Link to SSH configuration guide: \href{https://magpi.raspberrypi.org/articles/ssh-remote-control-raspberry-pi}{https://magpi.raspberrypi.org/...}\footnote{Click the link to go to the website}\\
+
+Link to static IP configuration guide: \href{https://thepihut.com/blogs/raspberry-pi-tutorials/how-to-give-your-raspberry-pi-a-static-ip-address-update}{https://thepihut.com/...}\footnote{If any of the links are dead at the time of setup please feel free to contact me (Andrew). I would be more than happy to help you setup static IP SSH capabilities on the pi}\\
+
+The software is currently setup for simulation. This means that the python script is currently reading the signals from a text file and not actually from the pins. However, this is very easy to change. All that must be done to switch the code is to modify the readPinsLoop, see Section~\ref{section:tasks}, function to use the RPi.GPIO package. This package is currently commented out in main.py, but if uncommment cna be used. The class IO\_Device has an automatic GPIO read/write assignment feature that should be uncommented as well. This would have been completed, but I (Andrew) ran out of time.
 
 \section{Future work}
 \label{section:future}
-There is a lot of work that still needs to be done and that could be done. This software and hardware
+There is a lot of work that still needs to be done and that could be done. This software and hardware has a lot of potential application with projects ranging from very trivial and quick to projects so complicated one could easily work full time on.
 
 \subsection{Combination of bash scripts with python}
 \label{section:picombo}
+The current build of the code makes use of bash scripts to do some of the OS level work. These scripts with some clever coding could easily be merged all into the python scripts. The first bash script, startCode.sh, launches the code and could very easily be replaced by making it so that main.py launches on start up. The other bash file clear\_run\_cache.sh is used to manage the output files and could definitely be rewritten in python. This might be useful as a user could configure a boolean that when set automatically deletes the output file unless a critical error is thrown, thus reducing the amount of ``junk'' output files.
 
 \subsection{write\_to\_log rework}
+\label{section:rework-log}
+Currently the write\_to\_log function is highly inefficient and works across multiple files. The way the code was written is clunky. With some clever coding writing this function could be cleaned up and made less awful. This project would most likely be best suited for an intermediate level programmer.
 
 \subsection{Idle exit}
 \label{section:idleE}
+The idle loop current exit scheme is flawed in that it uses a complicated boolean system inorder to exit. Future work could involve creating a smarter way of exiting to code \textbf{FIX THIS NOT COMPLETE}
 
 \subsection{Main file split}
 \label{section:mainsplit}
+The current layout of the code has much of the code residing in the main file. Specifically all the task and pin definitions are done in the main.py file. In the future a separate file could be created for the definitions. This project would be another great way to learn python as the project is relatively simple.
 
 \subsection{Deposition controller pi}
+\label{section:depcon}
+\textbf{Note:} This project could potentially be much more difficult than the original project.\\
+Using another raspberry create a controller that interfaces with the deposition controller (the device that controls the current to the deposition chamber).Because of the limited number of free GPIO pins on the original Pi\footnote{These are also something that should be saved for added additional analog to digital measurement devices} the two pis would most likely need to communicate with some sort of web protocol. This project would involve studying hamming codes and data protection, digital data transition, and fabrication of a new pi controller system. This project should only be attempted if the people involved have a lot of time and or experience.
 
 \subsection{Web interface}
+\label{section:web-interface}
+This project would be to create some online login system that would allow a user with the correct credentials to remotely activate the deposition machine. This project could potentially be handy capped by the UWB IT, so it is suggested that if this project is something that \textit{you} would like to work on to first reach out to IT and ask if this is something they could greenlight.
 
 \subsection{GUI interface}
+\label{section:GUI}
+The deposition system currently will run in a totally headless/text bases version. With some javascript and HTML experience one could create a local host page that has a GUI giving readouts and other system info. This project would be relativity beginner friendly and would be a great way to learn HTML, javascript, and python. This project could also be very useful to pair with Section~\ref{section:web-interface}.
 
 \subsection{Automatic mode}
 \label{section:auto}
-probably will need another pi, blah blah blah, pi network....
+The system currently runs in manual mode, meaning that PiBrain make decisions based on user input. PiBrain will never turn something on unless it is specifically told via an electrical signal. An automatic mode would allow PiBrain to determine when each step should be run. This would work with various sensors that would need to be added and wired to PiBrain and with timers to prevent accidental signals to break the code. The main idea is that PiBrain would run through a set of commands that needed both a positive signal from the machine and a positive signal from a timer that would be set at the start of a command. This project would work really well with the projects listed in Section~\ref{section:web-interface} and \ref{section:GUI}. It may even require a separate pi for measuring other signals and then using a wireless relay method similar to the idea in Section~\ref{section:depcon}. This project would be good for someone who wanted an intermediate coding project, the scope of this project could be as wide as the participant would want it to be.
 
 \subsection{IO\_Device class change}
 \label{section:IOclassedit}
+This project would aim to split the IO\_Device class into two child classes of the current IO\_Device class. The main idea is that the split would be for input and output devices as currently methods for specific types can be called for both types which throws errors. As an example a write pin can be told to read which then throws an error. This could be worked around by instead having two separate classes which both have a parent class that allows them to share some methods. This project would be great for a beginner programmer who wants to learn python and more generally learn how to use object oriented programming!
+
 
 \subsection{Allowing for hard exits}
-no code currently shutdown the machine completely. This should be changed.
+no code currently shutdown the machine completely. This should be changed. This should be fixed before PiBrain is able to control the machine. Specifically if the machine returns certain inputs the code should automatically exit to a deemed safe mode.
 
 \subsection{System file log}
 \label{section:systemstatchange}
-Creating a logging system with the system\_status function that is stored locally on the pi.
+A good addition to the current logging system would be to create a logging system with the system\_status function that is stored locally on the pi. This way there could be a log of each pin's status for each change. This would also tie in nicely with the projects listed in Section~\ref{section:web-interface} and \ref{section:GUI} as both of these projects would need some place to reference the current state of the machine.
+
+\section{Acknowledgements}
+I would like to thank Dr. Ramachandran for this amazing experience that he has provided me with. I have learned a lot under his instruction, and have learn much about experimental physics! He has acted as a great inspiration for me to set my sights on graduate school (especially now that I am aware that with a PhD I get undergrads to push \textit{my} carts). \\
+
+I would like to thank one of my co-contributors on this project, Leo Janzen. With out his hard work on the design of the circuit and the fabrication of the circuit this project would be nothing more than some poorly written documentation for some code that controls a virtual deposition machine. Thanks Leo for your hard work and the ability to understand what I am talking about (sometimes I wonder how you do it, because I sure can't).\\
+
+I would also like to thank the one and only Michael T. Parker, who was not directly a part of this project, did provide a lot of laughs and good times.\\
+
+And lastly I would like to thank the Bothell summer 2021 REU coordinators for making this experience possible. This REU program has made such a large impact on my life! I am forever changed by this experience and am very grateful that I was given this opportunity.
 \end{document}
