@@ -6,7 +6,7 @@
 \usepackage{xcolor}
 
 \title{PiBrain Documentation}
-\author{Andrew M. Evans}
+\author{Andrew M. Evans, Leo P. Janzen}
 \date{July 2021}
 
 \begin{document}
@@ -31,10 +31,18 @@ To contact the original creator (Andrew) please use the following resources:
     \item Alternate email: andrew.m.evans1989@gmail.com
     \item Discord: Andrew Evans\#4366
 \end{itemize}
-Responses wont be instantaneous, but I will try and get around to it!
+To contact the creator of the hardware (Leo) please use the followiing 
+\begin{itemize}
+    \item Email: lpjanzen@ucdavis.edu
+\end{itemize}
+
+
+Responses wont be instantaneous, but we will try and get around to it!
 
 \section{Software}
+\label{section:software}
 This section will detail all current pieces of the code along with idea behind the organization and structure of the code. The code is broken up into three categories: bash scripts, state machine, and main. The general idea of the code is that the bash scripts do the operating system level work (automated startup, file clean up, etc see Section~\ref{section:bash}), the state machine does the ``organizational'' work of the software (running the main logic tree which includes the idle loop see Section~\ref{section:state}), and lastly main which contains the hardware interfacing code (see Section~\ref{section:main}). There are some aspects of this layout which could\footnote{most likely should be changed} be changed in the future (see Section~\ref{section:future}).
+
 \subsection{Bash scripts}
 \label{section:bash}
 Currently there are two bash scripts: clear\_run\_cache.sh, and startCode.sh. Both scripts are incredibly simple and act as a way of automatically running system commands
@@ -131,7 +139,7 @@ This class allows for text color to be set by adding attributes of this class to
 
 \begin{center}
     \begin{figure}[h!]
-        print(bcolors.FAIL+"Oh god the computer is on fire"+bcolors.RESET)\\
+        print(bcolors.FAIL+``Oh god the computer is on fire''+bcolors.RESET)\\
         $>$$>$$>${\color{red}Oh god the computer is on fire}
       \caption{Example use of bcolors}
       \label{fig:bcolors}
@@ -158,15 +166,133 @@ The first method (other than init) is the setHigh method. This method sets outpu
 Next is the setLow method. This method serves the exact same purpose as the setHigh method but sets the pin low. These two methods could technically be done in one method taking an argument for setting high vs low, however, this was decided against to improve readability.\\
 
 \subsubsection{Tasks}
-The tasks are the main functions which the machine communicates to the state machine. Potential changes to this organization are discussed in Section~\ref{section:mainsplit}. The general idea is that the tasks contain simple logic conditions which result in setting pins using the setHigh/Low methods and then the task returns a three-tuple as discussed in Section~\ref{section:logwrite}. To see the logic for each task see Fig~\ref{fig:ladder}.
+The tasks are the main functions which the machine communicates to the state machine. Potential changes to this organization are discussed in Section~\ref{section:mainsplit}. The general idea is that the tasks contain simple logic conditions which result in setting pins using the setHigh/Low methods and then the task returns a three-tuple as discussed in Section~\ref{section:logwrite}. To see the logic for each task see Fig~\ref{fig:ladder}. \\
+
+There are three task that do show up on Fig~\ref{fig:ladder}. These tasks do not correspond to a piece of the physical machine, but rather they are used for lower level actions. The three functions are: readPinsLoop, shutdownSys, and system\_status. \\
+
+readPinsLoop checks a text file to see if the pin in the file is set to true. This will be changed in the final build to actually read from the pins!\\
+
+shutdownSys sets all the output pins to low. This done to not draw power while the system is off, and also make the raspberry pi safe to handle once the system is shutdown.\\
+
+system\_status is a debugging tool used to quick output the status of all the pins. This function is only used when testing the code, but with some minor modification could print to a new text log file acting as a more powerful debugging tool see Section~\ref{section:systemstatchange}.
 
 \subsubsection{Pin definitions}
-
-\subsubsection{Function}
+\label{section:pin_def}
+The pins are fully defined in the code, however for the sake of convenience their names and numbers will be listed in Table~\ref{table:pin_def_t}. In the current build two pins remain free (20, and 21 on the raspberry pi).
+\begin{table}[h!]
+\centering
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+    Name  & Input/Output& Pin number & GPIO number    \\ \hline
+    Start & Input & 0000 & 26   \\ \hline
+    Stop & Input & 0001 & 19 \\ \hline
+    Crossover & Input & 0002 & 13 \\ \hline
+    Auto & Input & 0003 & 06 \\ \hline
+    On\_Reset & Input & 0004 & 05 \\ \hline
+    Manual & Input & 0005 & 00 \\ \hline
+    Vent & Input & 0006 & 11 \\ \hline
+    Rough\_S2 & Input & 0007 & 09 \\ \hline
+    COM & & & \\ \hline
+    & & & \\ \hline
+    HI\_VAC\_Valve & Input & 0008 & 10 \\ \hline
+    Cryo\_Rough & Input & 0009 & 22 \\ \hline
+    Cryo\_Purge & Input & 0010 & 27 \\ \hline
+    Vacuum\_In & Input & 0011 & 17 \\ \hline
+    Rough\_SW & Input & 0012 & 04 \\ \hline
+    Water\_Lock & Input & 0013 & 03 \\ \hline
+    Vent\_Auto & Input & 0014 & 02 \\ \hline
+    -NONE- & Input & 0015 & 14 \\ \hline
+    COM &  &  &  \\ \hline
+     &  &  &  \\ \hline
+    OUT0 & Output & 0500 & 14 \\ \hline
+    OUT1 & Output & 0501 & 15 \\ \hline
+    OUT2 & Output & 0502 & 18 \\ \hline
+    OUT3 & Output & 0503 & 23 \\ \hline
+    OUT4 & Output & 0504 & 24 \\ \hline
+    OUT5 & Output & 0505 & 08 \\ \hline
+    OUT6 & Output & 0506 & 07 \\ \hline
+    OUT7 & Output & 0507 & 01 \\ \hline
+    COM & & & \\ \hline
+    & & & \\ \hline
+    OUT8 & Output & 0508 & 12 \\ \hline
+    OUT9 & Output & 0509 & 16 \\ \hline
+    -NONE- & Output & 0510 & 20 \\ \hline
+    COM & & & \\ \hline
+    & & & \\ \hline
+    -NONE- & Output & 0511 & 21 \\ \hline
+    COM & & & \\ \hline
+    & & & \\ \hline
+    \end{tabular}
+\caption{PLC codes and GPIO numbers grouped by COM}
+\label{table:pin_def_t}
+\end{table} 
 
 \section{Hardware}
+There are two main pieces of hardware that make up the PiBrain, there is the raspberry pi, the ``Brain'', and there is the PCB, the ``nervous system''. This section will aim to cover the specifics of each. Attached with this PDF there will be schematics of the hardware, with CAD files. The main goal of this is to have easy documentation to help with repairs and future work. There will also be a subsection detailing the computer that the PiBrain is replacing and hardware which PiBrain will control.
+
+\subsection{Overview}
+This board interfaces between a Cooke MK-VII Vacuum Deposition Machine and a Raspberry Pi Zero w. It has been designed to replace the Omron Sysmac C20, and thus copies the input/output schema of the C20.\\
+
+Input COMs should be connected to +24V. Raspberry Pi inputs are \textbf{normally high} (3.3V). When an IN is connected to ground, the corresponding LED will illuminate and the corresponding Raspberry Pi pin will be pulled low (0V).\\
+
+When Raspberry Pi outputs are low (0V), the corresponding OUT will be open circuit. When the Raspberry Pi output goes high (3.3V), the corresponding LED will illuminate, and the corresponding OUT will be connected to a COM via a relay.\\
+
+\textbf{
+NOTE: Internal and external inputs and outputs are completely isolated from each other. The mounting hole in the upper right (labeled GND) is connected to internal ground and can be connected to external ground if desired.}\\
+
+
+\begin{table}[h!]
+\centering
+    \begin{tabular}{|l|r|c|}
+    \hline
+    Name  & Value & Units   \\ \hline
+    Input Voltage ($\text{V}_{\text{COM-INX}}$)  &  &    \\ \hline
+    Maximum operating & -15 & V\\ \hline
+    Typical operating & -24 & V \\ \hline
+    Minimum operating & -30 & V \\ \hline
+    Absolute Maximum &  30 & V \\ \hline
+    Absolute Minimum & -30 & V \\ \hline
+    & & \\ \hline
+    Input current $\text{I}_\text{INX}$ & & \\ \hline
+    Typical forward (-24V) & 10 & mA \\ \hline
+    & & \\ \hline
+    Maximum Output Switching Voltage & 30 & V \\ \hline
+    & & \\ \hline
+    Output Current & & \\ \hline
+    Maximum Per Output & 5 & A \\ \hline 
+    Maximum Per COM & 16 & A \\ \hline
+
+    \end{tabular}
+\caption{Electrical characteristics}
+\label{table:elec_char}
+\end{table} 
+
 \subsection{Raspberry pi}
 \label{section:raspi}
+The ``Brain'' of this project so to speak is a \href{https://www.raspberrypi.org/products/raspberry-pi-zero-w/}{ Raspberry Pi Zero w}\footnote{Click for a link to the website}. This controller runs all the software described in Section~\ref{section:software}. Table~\ref{table:pin_def_t} contains all the information on how the GPIO pins on the raspberry pi correspond to the functions in the software.
+
+\subsection{PCB}
+This section will give detail on the PCB which the raspberry pi is attached to. This Piece of hardware is designed to allow the raspberry pi to communicate with the deposition machine without being on a 30V circuit.
+\begin{center}
+    \begin{figure}[h!]
+      \includegraphics[scale=.8]{inputschem.png}
+      \caption{Input schematic. COM is connected to +24V. When IN0 goes low, LED1 and ISO1 will turn on, pulling down IN0 RPi to 0V. When IN0 is high or disconnected, IN0 RPi will be pulled up to 3.3V by R2.}
+      \label{fig:input_schem}
+    \end{figure}
+\end{center}
+
+
+
+\begin{center}
+    \begin{figure}[h!]
+      \includegraphics[scale=.9]{outputschem.png}
+      \caption{Output schematic. When OUT0 RPi goes high (3.3V), LED1 will light and Q1 will actuate K1, connecting OUT0 to COM.}
+      \label{fig:output_schem}
+    \end{figure}
+\end{center}
+
+
+\subsection{Case}
 
 \subsection{Deposition machine}
 
@@ -207,13 +333,14 @@ This is a direct copy of what was used to run the PLC, and what the PiBrain was 
       \label{fig:ladder}
     \end{figure}
 \end{center}
-
-
+For more information on what the codes in Fig~\ref{fig:ladder} please see Section~\ref{section:pin_def}
 
 \section{Installation}
+At the time of this documents creation the PiBrain is not installed on the deposition machine. This task will be left as work for the next person to take on this project\footnote{I hope that you enjoy your work on PiBrain :)}. The installation should happen in two parts: fitting, and wiring. The PiBrain will be put inside a case which will have mounting holes, bolts will be fit through the mounting holes into newly drilled holes in the deposition machine\footnote{With some clever design the PiBrain case could attach to the deposition machine in the same way that the PLC attached to the machine!}. The wiring will relatively trivial compared to the rest of the process as long as the user labels the wires before they remove them from the original hardware.
 
 \section{Future work}
 \label{section:future}
+There is a lot of work that still needs to be done and that could be done. This software and hardware
 
 \subsection{Combination of bash scripts with python}
 \label{section:picombo}
@@ -238,4 +365,11 @@ probably will need another pi, blah blah blah, pi network....
 
 \subsection{IO\_Device class change}
 \label{section:IOclassedit}
+
+\subsection{Allowing for hard exits}
+no code currently shutdown the machine completely. This should be changed.
+
+\subsection{System file log}
+\label{section:systemstatchange}
+Creating a logging system with the system\_status function that is stored locally on the pi.
 \end{document}

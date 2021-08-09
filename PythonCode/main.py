@@ -280,12 +280,12 @@ def system_status():
 
 #initialization of the pins 
 #inputs
-Start = IO_Device("Start", "input", True, "0000",26)#testing should be set to false by  default
+Start = IO_Device("Start", "input", False, "0000",26)#testing should be set to false by  default
 Stop = IO_Device("Stop", "input", False, "0001",19)
 Crossover = IO_Device("Crossover", "input", False, "0002",13)
 Auto = IO_Device("Auto", "input", False, "0003",6)
-On_Reset = IO_Device("On_Reset", "input", True, "0004",5) #testing should be set to false by  default
-Manual = IO_Device("Manual", "input", True, "0005",0)#testing should be set to false by  default
+On_Reset = IO_Device("On_Reset", "input", False, "0004",5) #testing should be set to false by  default
+Manual = IO_Device("Manual", "input", False, "0005",0)#testing should be set to false by  default
 Vent = IO_Device("Vent", "input", False, "0006",11)
 Rough_S2 = IO_Device("Rough_S2", "input", False, "0007",9)
 HI_VAC_Valve = IO_Device("HI_VAC_Valve", "input", False, "0008",10)
@@ -297,6 +297,7 @@ Water_Lock = IO_Device("Water_Lock", "input", False, "0013",3)
 Vent_Auto = IO_Device("Vent_Auto", "input", False, "0014",2)
 
 #outputs (the raspiout will be changed later!)
+OUT0 = IO_Device("OUT0", "output", False, "0500",15)
 OUT1 = IO_Device("OUT1", "output", False, "0501",15)
 OUT2 = IO_Device("OUT2", "output", False, "0502",18)
 OUT3 = IO_Device("OUT3", "output", False, "0503",23)

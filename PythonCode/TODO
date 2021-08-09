@@ -1,5 +1,9 @@
 Stop the read loop from dying when it doesn't understand input! lol
 
+Add the break statement shutdown sequence -> try except 
+
+Change raspi pins, Fix Rasp_pin (GPIO pin #)
+
 Make the code  always run the shutdown sequence
 
 Add the help documentation 
